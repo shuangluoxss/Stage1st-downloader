@@ -127,7 +127,7 @@ class WorkThread(QThread):
             try:
                 page = self.sess.get(url).text
                 soup = BeautifulSoup(page, 'html.parser')
-                total_page = int(re.findall(r'<span title="共 (\d+) 页">', page)[0])
+                total_page = int((re.findall(r'<span title="共 (\d+) 页">', page) + [1])[0])
                 title = soup.find('h1').find('a').text + ' ' + soup.find('h1').find('span').text
                 break
             except Exception as e:
