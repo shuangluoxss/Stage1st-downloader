@@ -56,7 +56,6 @@ class WorkThread(QThread):
         todo_list = list(filter(lambda x: x.get(keyword), todo_list))
         for j in range(5):
             source_list = [x.get(keyword) for x in todo_list]
-            print(source_list)
             pool = ThreadPool(processes=8)
             source_filename_list = pool.map(self.download_source, source_list)
             pool.close()
