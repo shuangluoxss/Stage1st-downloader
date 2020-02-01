@@ -41,11 +41,15 @@ class WorkThread(QThread):
         os.makedirs(os.getcwd().replace('\\', '/') + '/data/' + '/'.join(source_filename.split('/')[:-1]), exist_ok=True)
         if not os.path.exists('data/' + source_filename):
             try:
-                with open('data/' + source_filename, 'wb+') as file:
-                    self.trigger.emit(['process', source])
-                    file.write(self.sess.get(source).content)
-                    if 'saraba1st' in source:
-                        time.sleep(0.2)
+                self.trigger.emit(['process', source])
+                resp = self.sess.get(source)
+                if resp.status_code == 200:
+                    with open('data/' + source_filename, 'wb+') as file:
+                        file.write(resp.content)
+                    return source_filename
+                else:
+                    print(source)
+                    return None
             except Exception as e:
                 self.trigger.emit(['error', e])
                 return None
@@ -54,9 +58,10 @@ class WorkThread(QThread):
                 
     def change_path(self, todo_list, keyword):
         todo_list = list(filter(lambda x: x.get(keyword), todo_list))
-        for j in range(5):
+        for j in range(3):
             source_list = [x.get(keyword) for x in todo_list]
-            pool = ThreadPool(processes=8)
+            # print(source_list)
+            pool = ThreadPool(processes=4)
             source_filename_list = pool.map(self.download_source, source_list)
             pool.close()
             pool.join()
@@ -71,7 +76,8 @@ class WorkThread(QThread):
                 return True
             else:                           #部分下载失败，继续下载
                 todo_list = next_todo_list
-                time.sleep((j+1) * 5)
+                print(len(todo_list))
+                time.sleep(1)
         for i in range(len(todo_list)):
             source = todo_list[i].get(keyword)
             if '//' not in source:
@@ -109,7 +115,7 @@ class WorkThread(QThread):
                 return True
             except Exception as e:
                 self.trigger.emit(['error', e])
-                time.sleep(10 * (j + 1))
+                time.sleep(5 * (j + 1))
         return False
 
     def download_thread(self, url, force_refresh=False, pn_range=None):
@@ -146,22 +152,33 @@ class WorkThread(QThread):
         except:
             self.trigger.emit(['error', '不是有效的S1帖子地址，请重新检查！'])
         url_template = re.sub(r'(thread-\d+-)(\d+?)(-\d)', r'\1%d\3',filename)
-        self.download_page(filename, soup=soup)
+        self.download_page(filename, soup=soup, force_refresh=force_refresh)
         if not pn_range:
             pn_range = (1, total_page + 1)
         else:
             for j in range(2):
                 if pn_range[j] < 0:
                     pn_range[j] = total_page + 1 - pn_range[j]
+        print(pn_range)
         for i in range(*pn_range):
-            self.download_page(url_template % i, force_refresh)
+            print('第%d页' % i, end='\r')
+            self.download_page(url_template % i, force_refresh=force_refresh)
             self.trigger.emit(['refresh', i, total_page, title])
         with open('%s.html' % title, 'w+', encoding='utf-8') as file:
             file.write('<head><meta http-equiv="refresh" content="0;url=data/%s"></head>' % (url_template % pn_range[0]))
             self.trigger.emit(['finished', total_page, title])
+        return total_page
 
     def run(self):
         try:
             self.download_thread(self.url)
         except Exception as e:
             self.trigger.emit(['error', e])
+
+if __name__ == '__main__':
+    wt = WorkThread()
+    wt.url = 'https://bbs.saraba1st.com/2b/thread-1911768-1-1.html'
+    while True:
+        total_page = wt.download_thread('https://bbs.saraba1st.com/2b/thread-1911768-1-1.html', force_refresh=True)
+        print(time.strftime("%m-%d %H:%M:%S", time.localtime()), total_page)
+        time.sleep(600)
