@@ -164,7 +164,7 @@ class WorkThread(QThread):
             print('第%d页' % i, end='\r')
             self.download_page(url_template % i, force_refresh=force_refresh)
             self.trigger.emit(['refresh', i, total_page, title])
-        with open('%s.html' % title, 'w+', encoding='utf-8') as file:
+        with open('%s.html' % re.sub(r'[\\/:*?"<>|]', '_', title), 'w+', encoding='utf-8') as file:
             file.write('<head><meta http-equiv="refresh" content="0;url=data/%s"></head>' % (url_template % pn_range[0]))
             self.trigger.emit(['finished', total_page, title])
         return total_page
