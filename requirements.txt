@@ -1,0 +1,11 @@
+altgraph==0.17
+beautifulsoup4==4.8.2
+certifi==2019.11.28
+chardet==3.0.4
+idna==2.8
+macholib==1.14
+PyQt5==5.14.1
+PyQt5-sip==12.7.1
+requests==2.22.0
+soupsieve==1.9.5
+urllib3==1.25.8
