@@ -36,6 +36,13 @@
    * 下载地址：[S1_downloader_v0.2.zip](https://github.com/shuangluoxss/Stage1st-downloader/releases/download/v0.2/S1_downloader_V0.2.zip)
    * 双击运行，在帖子地址中粘贴帖子地址，点开始下载即可
    * 若需要登录，点击“登录”，输入账号密码
+- 命令行版本
+   - 使用方法：
+      - python3 ./S1_downloader_cli.py [-h] [-u USER] [-p PASSWORD] [-v] threads [threads ...]
+      - -h, --help 显示帮助
+      - -u USER, --user USER S1 账号名
+      - -p PASSWORD, --password PASSWORD 账号密码
+      - -v, --verbose 显示调试信息（当出错时使用）
 
 注意：不要将程序放在C盘**系统文件夹**内，以免因权限问题报错
 
