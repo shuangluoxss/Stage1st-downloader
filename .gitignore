@@ -6,3 +6,7 @@
 .DS_Store
 
 /.idea
+/dist
+/build
+*.spec
+/.venv
