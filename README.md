@@ -1,5 +1,10 @@
 # Stage1st 论坛专楼下载器
 
+> **⚠️ 重要通知**  
+> 本项目已完全重构为 **[forum-saver](https://github.com/shuangluoxss/forum-saver)**，功能更强大、支持更多论坛、性能更好。  
+> 旧仓库将不再维护，请前往新仓库下载使用。  
+> 👉 [**点击前往 forum-saver**](https://github.com/shuangluoxss/forum-saver)
+
 ## 简介
 
 使用 python 实现，原理是用 requests 下载帖子每页的 html，然后将其中所有 css、script 和图片保存至本地
